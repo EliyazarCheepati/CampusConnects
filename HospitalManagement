@@ -1,0 +1,154 @@
+import java.util.*;
+
+// Patient Class
+class Patient {
+    int id;
+    String name;
+    int age;
+    String disease;
+    String doctor;
+    boolean admitted;
+
+    public Patient(int id, String name, int age, String disease) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.disease = disease;
+        this.doctor = "Not Assigned";
+        this.admitted = true;
+    }
+
+    public void display() {
+        System.out.println("ID: " + id +
+                " | Name: " + name +
+                " | Age: " + age +
+                " | Disease: " + disease +
+                " | Doctor: " + doctor +
+                " | Status: " + (admitted ? "Admitted" : "Discharged"));
+    }
+}
+
+// Hospital Class
+class Hospital {
+    private List<Patient> patients;
+
+    public Hospital() {
+        patients = new ArrayList<>();
+    }
+
+    // Add Patient
+    public void addPatient(int id, String name, int age, String disease) {
+        patients.add(new Patient(id, name, age, disease));
+        System.out.println("Patient added successfully!");
+    }
+
+    // View Patients
+    public void viewPatients() {
+        if (patients.isEmpty()) {
+            System.out.println("No patients found!");
+            return;
+        }
+
+        for (Patient p : patients) {
+            p.display();
+        }
+    }
+
+    // Assign Doctor
+    public void assignDoctor(int id, String doctorName) {
+        for (Patient p : patients) {
+            if (p.id == id) {
+                p.doctor = doctorName;
+                System.out.println("Doctor assigned successfully!");
+                return;
+            }
+        }
+        System.out.println("Patient not found!");
+    }
+
+    // Discharge Patient
+    public void dischargePatient(int id) {
+        for (Patient p : patients) {
+            if (p.id == id) {
+                if (p.admitted) {
+                    p.admitted = false;
+                    System.out.println("Patient discharged successfully!");
+                } else {
+                    System.out.println("Patient already discharged!");
+                }
+                return;
+            }
+        }
+        System.out.println("Patient not found!");
+    }
+}
+
+// Main Class
+public class HospitalManagement {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Hospital hospital = new Hospital();
+
+        int choice;
+
+        do {
+            System.out.println("\n--- HOSPITAL MANAGEMENT SYSTEM ---");
+            System.out.println("1. Add Patient");
+            System.out.println("2. View Patients");
+            System.out.println("3. Assign Doctor");
+            System.out.println("4. Discharge Patient");
+            System.out.println("5. Exit");
+            System.out.print("Enter choice: ");
+
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter ID: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter Age: ");
+                    int age = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter Disease: ");
+                    String disease = sc.nextLine();
+
+                    hospital.addPatient(id, name, age, disease);
+                    break;
+
+                case 2:
+                    hospital.viewPatients();
+                    break;
+
+                case 3:
+                    System.out.print("Enter Patient ID: ");
+                    int pid = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter Doctor Name: ");
+                    String doc = sc.nextLine();
+
+                    hospital.assignDoctor(pid, doc);
+                    break;
+
+                case 4:
+                    System.out.print("Enter Patient ID: ");
+                    int did = sc.nextInt();
+
+                    hospital.dischargePatient(did);
+                    break;
+
+                case 5:
+                    System.out.println("Thank You!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 5);
+
+        sc.close();
+    }
+}
