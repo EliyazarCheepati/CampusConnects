@@ -1,0 +1,167 @@
+import java.util.*;
+
+interface HotelService {
+    void checkIn(String name, int roomNo);
+    void checkOut(int roomNo);
+    void displayRooms();
+}
+
+abstract class Room {
+    protected int roomNo;
+    protected boolean isBooked;
+    protected String customerName;
+    protected double price;
+
+    public Room(int roomNo, double price) {
+        this.roomNo = roomNo;
+        this.price = price;
+        this.isBooked = false;
+        this.customerName = "";
+    }
+
+    abstract void roomType();
+
+    public void bookRoom(String name) {
+        if (!isBooked) {
+            isBooked = true;
+            customerName = name;
+            System.out.println("Room " + roomNo + " booked for " + name);
+        } else {
+            System.out.println("Room already booked!");
+        }
+    }
+
+    public void vacateRoom() {
+        if (isBooked) {
+            System.out.println("Customer " + customerName + " checked out.");
+            isBooked = false;
+            customerName = "";
+        } else {
+            System.out.println("Room already empty!");
+        }
+    }
+
+    public void display() {
+        System.out.println("Room No: " + roomNo +
+                " | Type: " + getClass().getSimpleName() +
+                " | Price: " + price +
+                " | Status: " + (isBooked ? "Booked" : "Available"));
+    }
+}
+
+
+class SingleRoom extends Room {
+    public SingleRoom(int roomNo) {
+        super(roomNo, 1000);
+    }
+
+    void roomType() {
+        System.out.println("Single Room");
+    }
+}
+
+
+class DoubleRoom extends Room {
+    public DoubleRoom(int roomNo) {
+        super(roomNo, 2000);
+    }
+
+    void roomType() {
+        System.out.println("Double Room");
+    }
+}
+
+
+class Hotel implements HotelService {
+    private List<Room> rooms;
+
+    public Hotel() {
+        rooms = new ArrayList<>();
+
+        // Create rooms
+        for (int i = 1; i <= 5; i++) {
+            rooms.add(new SingleRoom(i));
+        }
+        for (int i = 6; i <= 10; i++) {
+            rooms.add(new DoubleRoom(i));
+        }
+    }
+
+    public void checkIn(String name, int roomNo) {
+        for (Room r : rooms) {
+            if (r.roomNo == roomNo) {
+                r.bookRoom(name);
+                return;
+            }
+        }
+        System.out.println("Room not found!");
+    }
+
+    public void checkOut(int roomNo) {
+        for (Room r : rooms) {
+            if (r.roomNo == roomNo) {
+                r.vacateRoom();
+                return;
+            }
+        }
+        System.out.println("Room not found!");
+    }
+
+    public void displayRooms() {
+        for (Room r : rooms) {
+            r.display();
+        }
+    }
+}
+
+
+public class HotelManagement {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Hotel hotel = new Hotel();
+
+        int choice;
+
+        do {
+            System.out.println("\n--- HOTEL MANAGEMENT SYSTEM ---");
+            System.out.println("1. Display Rooms");
+            System.out.println("2. Check In");
+            System.out.println("3. Check Out");
+            System.out.println("4. Exit");
+            System.out.print("Enter choice: ");
+
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    hotel.displayRooms();
+                    break;
+
+                case 2:
+                    sc.nextLine(); // clear buffer
+                    System.out.print("Enter customer name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter room number: ");
+                    int roomNo = sc.nextInt();
+                    hotel.checkIn(name, roomNo);
+                    break;
+
+                case 3:
+                    System.out.print("Enter room number: ");
+                    int rno = sc.nextInt();
+                    hotel.checkOut(rno);
+                    break;
+
+                case 4:
+                    System.out.println("Thank You!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 4);
+
+        sc.close();
+    }
+}
